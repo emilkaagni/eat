@@ -132,8 +132,7 @@ class MyProfileScreen extends StatelessWidget {
 
                       // Options: Contact Us, About Us, Log Out
                       buildOptionRow(
-                        icon:
-                            '/Users/emilbasnyat/development/UI:UX_Mun/Eat-Fit/assets/icons/email.png',
+                        icon: 'assets/icons/email.png',
                         text: "Contact Us",
                         textColor: Colors.black,
                         onTap: () {
@@ -148,8 +147,7 @@ class MyProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       buildOptionRow(
-                        icon:
-                            '/Users/emilbasnyat/development/UI:UX_Mun/Eat-Fit/assets/icons/about.png',
+                        icon: 'assets/icons/about.png',
                         text: "About Us",
                         textColor: Colors.black,
                         onTap: () {
@@ -165,8 +163,7 @@ class MyProfileScreen extends StatelessWidget {
 
                       const SizedBox(height: 16),
                       buildOptionRow(
-                        icon:
-                            '/Users/emilbasnyat/development/UI:UX_Mun/Eat-Fit/assets/icons/logout.png',
+                        icon: 'assets/icons/logout.png',
                         text: "Log Out",
                         textColor:
                             const Color(0xFFCB2030), // Red color for log out

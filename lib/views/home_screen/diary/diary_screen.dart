@@ -95,6 +95,77 @@ class _DiaryScreenState extends State<DiaryScreen> {
     );
   }
 
+  // /// Push daily totals to Firestore for the selected date
+  /// Push daily totals to Firestore for the selected date
+  Future<void> _pushDailyTotalsToFirestore(Map<String, int> totals) async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId == null) {
+      print("No user logged in. Cannot save daily totals.");
+      return;
+    }
+
+    // Check if all totals are 0. If so, skip saving to Firestore
+    if (totals['calories'] == 0 &&
+        totals['proteins'] == 0 &&
+        totals['fats'] == 0 &&
+        totals['carbs'] == 0) {
+      print("No nutrients data to save. Skipping Firestore update.");
+      return;
+    }
+
+    final selectedDate = selectedDateNotifier.value;
+    final formattedDate =
+        "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+
+    try {
+      await _firestore
+          .collection('daily_totals')
+          .doc("$userId-$formattedDate")
+          .set({
+        'userId': userId,
+        'date': formattedDate,
+        'calories': totals['calories'] ?? 0,
+        'proteins': totals['proteins'] ?? 0,
+        'fats': totals['fats'] ?? 0,
+        'carbs': totals['carbs'] ?? 0,
+      });
+      print("Daily totals pushed to Firestore for $formattedDate.");
+    } catch (e) {
+      print("Failed to push daily totals: $e");
+    }
+  }
+
+  // Future<void> _pushDailyTotalsToFirestore(Map<String, int> totals) async {
+  //   final userId = FirebaseAuth.instance.currentUser?.uid;
+
+  //   if (userId == null) {
+  //     print("No user logged in. Cannot save daily totals.");
+  //     return;
+  //   }
+
+  //   final selectedDate = selectedDateNotifier.value;
+  //   final formattedDate =
+  //       "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+
+  //   try {
+  //     await _firestore
+  //         .collection('daily_totals')
+  //         .doc("$userId-$formattedDate")
+  //         .set({
+  //       'userId': userId,
+  //       'date': formattedDate,
+  //       'calories': totals['calories'] ?? 0,
+  //       'proteins': totals['proteins'] ?? 0,
+  //       'fats': totals['fats'] ?? 0,
+  //       'carbs': totals['carbs'] ?? 0,
+  //     });
+  //     print("Daily totals pushed to Firestore for $formattedDate.");
+  //   } catch (e) {
+  //     print("Failed to push daily totals: $e");
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<DateTime>(
@@ -225,6 +296,9 @@ class _DiaryScreenState extends State<DiaryScreen> {
 
   /// Build a row displaying the total nutrition information
   Widget _buildNutritionInfoRow(Map<String, int> totals) {
+    // Push totals for the selected date
+    _pushDailyTotalsToFirestore(totals);
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
